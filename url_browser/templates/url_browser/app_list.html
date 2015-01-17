@@ -42,25 +42,42 @@
 {% endblock %}
 
 {% block content %}
-<ul>
-{% for app, forms in apps.items %}
-    <li>{{ app }}
-        <ul>
-            {% for name, form in forms.items %}
-            {% if form %}
-            <li>{{ form.Meta.verbose_name }}
-                <form id="id_{{ form.get_url_name }}">{% csrf_token %}
-                {{ form }}
-                <input type="button" value="Sacuvaj" onclick="set_url('#id_{{ form.get_url_name }}', true); return false;">
-                </form>
-            </li>
-            {% else %}
-                <!-- <li><a href="" onclick="opener.dismissRelatedLookupPopup(window, '{{ name }}'); return false;">{{ name }}</a></li> -->
-                <li><a href="#" onclick="set_url('{{ name }}', false);">{{ name }}</a></li>
-            {% endif %}
-            {% endfor %}
-        </ul>
-    </li>
-{% endfor %}
-</ul>
+    <div class="accordion" id="accordion">
+        {% for app, forms in apps.items %}
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a data-toggle="collapse" href="#{{ app }}" class="accordion-toggle">{{ app }}</a>
+            </div>
+            <div id="{{ app }}" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <div class="accordion">
+                        {% for name, form in forms.items %}
+                        <div class="accordion-group">
+                            {% if form %}
+                            <div class="accordion-heading">
+                                <a data-toggle="collapse" href="#{{ name }}" class="accordion-toggle">{{ form.Meta.verbose_name }}</a>
+                            </div>
+                            <div id="{{ name }}" class="accordion-body collapse">
+                                <div class="accordion-inner">
+                                    <div class="form-group">
+                                        <form id="id_{{ form.get_url_name }}">{% csrf_token %}
+                                        {{ form }}
+                                        <input type="button" value="SET" onclick="set_url('#id_{{ form.get_url_name }}', true); return false;" class="btn btn-primary">
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="accordion-heading">
+                                <a href="#" onclick="set_url('{{ name }}', false);">{{ name }}</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 {% endblock %}
