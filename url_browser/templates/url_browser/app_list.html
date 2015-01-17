@@ -31,7 +31,7 @@
         if (is_form) url = send(url);
         ckeditor_param = getUrlParam("CKEditorFuncNum");
         if (ckeditor_param) {
-            url = {% verbatim %} "{% url '" + url + "' %}" {% endverbatim %};
+            url = {% verbatim %} "{% url " + url + " %}" {% endverbatim %};
             window.opener.CKEDITOR.tools.callFunction( ckeditor_param, url);
             this.close();
         } else {
