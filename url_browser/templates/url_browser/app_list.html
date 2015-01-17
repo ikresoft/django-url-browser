@@ -2,16 +2,41 @@
 
 {% block extrahead %}{{ media }}
 <script type="text/javascript">
+    function getUrlParam( paramName ) {
+        var reParam = new RegExp( '(?:[\?&]|&)' + paramName + '=([^&]+)', 'i' ) ;
+        var match = window.location.search.match(reParam) ;
+
+        return ( match && match.length > 1 ) ? match[ 1 ] : null ;
+    }
+
     function send(form_id) {
-        var form = $(form_id);
-        console.log(form);
-        $.post(
-            '{% url 'form_view' %}',
-            form.serializeArray(),
-            function(responseText, responseStatus) {
-                opener.dismissRelatedLookupPopup(window, responseText);     
+        form = $(form_id);
+        url = ''
+        $.ajax(
+            '{% url 'url-browser' %}',
+            {
+                type: 'POST',
+                data: form.serializeArray(),
+                success: function(responseText, responseStatus) {
+                    //opener.dismissRelatedLookupPopup(window, responseText);
+                    url = responseText;
+                },
+                async:false
             }
         );
+        return url;
+    }
+
+    function set_url(url, is_form) {
+        if (is_form) url = send(url);
+        ckeditor_param = getUrlParam("CKEditorFuncNum");
+        if (ckeditor_param) {
+            url = {% verbatim %} "{% url '" + url + "' %}" {% endverbatim %};
+            window.opener.CKEDITOR.tools.callFunction( ckeditor_param, url);
+            this.close();
+        } else {
+            opener.dismissRelatedLookupPopup(window, url);
+        }
     }
 </script>
 {% endblock %}
@@ -26,11 +51,12 @@
             <li>{{ form.Meta.verbose_name }}
                 <form id="id_{{ form.get_url_name }}">{% csrf_token %}
                 {{ form }}
-                <input type="button" value="Sacuvaj" onclick="send('#id_{{ form.get_url_name }}'); return false;" href="">
+                <input type="button" value="Sacuvaj" onclick="set_url('#id_{{ form.get_url_name }}', true); return false;">
                 </form>
             </li>
             {% else %}
-                <li><a href="" onclick="opener.dismissRelatedLookupPopup(window, '{{ name }}'); return false;">{{ name }}</a></li>
+                <!-- <li><a href="" onclick="opener.dismissRelatedLookupPopup(window, '{{ name }}'); return false;">{{ name }}</a></li> -->
+                <li><a href="#" onclick="set_url('{{ name }}', false);">{{ name }}</a></li>
             {% endif %}
             {% endfor %}
         </ul>

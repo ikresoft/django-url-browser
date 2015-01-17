@@ -15,7 +15,7 @@ class UrlWidget(forms.TextInput):
             attrs = {}
         extra = []
 
-        related_url = reverse('form_view')
+        related_url = reverse('url-browser')
 
         params = {'url': value}
         if params:

@@ -3,5 +3,5 @@ from views import form_view
 
 
 urlpatterns = patterns('',
-    url(r'^form_view/$', form_view, name='form_view'),
+    url(r'^form-view/$', form_view, name='url-browser'),
 )
