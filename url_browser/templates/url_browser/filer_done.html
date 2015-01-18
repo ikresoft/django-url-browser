@@ -1,0 +1,11 @@
+{% extends "admin/base.html" %}
+
+{% block extrahead %}
+{{ block.super }}
+<script type="text/javascript">
+	{% if ckeditor_param %}
+	window.opener.CKEDITOR.tools.callFunction( {{ ckeditor_param }}, '{{ url }}');
+    this.close();
+    {% endif %}
+</script>
+{% endblock %}

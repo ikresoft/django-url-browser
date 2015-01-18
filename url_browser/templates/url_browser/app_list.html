@@ -1,6 +1,7 @@
 {% extends "admin/base.html" %}
 
 {% block extrahead %}{{ media }}
+{{ image_form.media }}
 <script type="text/javascript">
     function getUrlParam( paramName ) {
         var reParam = new RegExp( '(?:[\?&]|&)' + paramName + '=([^&]+)', 'i' ) ;
@@ -18,7 +19,6 @@
                 type: 'POST',
                 data: form.serializeArray(),
                 success: function(responseText, responseStatus) {
-                    //opener.dismissRelatedLookupPopup(window, responseText);
                     url = responseText;
                 },
                 async:false
@@ -42,42 +42,125 @@
 {% endblock %}
 
 {% block content %}
-    <div class="accordion" id="accordion">
-        {% for app, forms in apps.items %}
-        <div class="accordion-group">
-            <div class="accordion-heading">
-                <a data-toggle="collapse" href="#{{ app }}" class="accordion-toggle">{{ app }}</a>
+<div class="accordion" id="accordion">
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a data-toggle="collapse" href="#images" class="accordion-toggle">Images</a>
+        </div>
+        <div id="images" class="accordion-body collapse">
+            <div class="accordion-inner">
+                <form method="post" action="{% url 'filer-set-image' %}">{% csrf_token %}
+                    <div class="row">
+                        <div class="span4">
+                            <input type="hidden" id="id_ckeditorfuncnum" name="ckeditorfuncnum" value="{{ request.GET.CKEditorFuncNum }}">
+                            {{ image_form.image }}
+                        </div>
+                        <div class="span4">
+                            <label for="{{ image_form.thumbnail_option.id_for_label }}">{{ image_form.thumbnail_option.label_tag }}</label>
+                            {{ image_form.thumbnail_option }}
+                        </div>
+                        <div class="span4"></div>
+                    </div>
+                    <div class="row">
+                        <div class="span4">
+                            <label for="{{ image_form.width.id_for_label }}">{{ image_form.width.label_tag }}</label>
+                            {{ image_form.width }}
+                        </div>
+                        <div class="span4">
+                            <label for="{{ image_form.height.id_for_label }}">{{ image_form.height.label_tag }}</label>
+                            {{ image_form.height }}
+                        </div>
+                        <div class="span4"></div>
+                    </div>
+                    <div class="row">
+                        <div class="span4">
+                            <label for="{{ image_form.use_autoscale.id_for_label }}">{{ image_form.use_autoscale.label_tag }}</label>
+                            {{ image_form.use_autoscale }}
+                        </div>
+                        <div class="span4">
+                            <label for="{{ image_form.scale.id_for_label }}">{{ image_form.scale.label_tag }}</label>
+                            {{ image_form.scale }}
+                        </div>
+                        <div class="span4">
+                            <label for="{{ image_form.upscale.id_for_label }}">{{ image_form.upscale.label_tag }}</label>
+                            {{ image_form.upscale }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="span12">
+                            <input type="submit" value="SET" class="btn btn-primary">
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div id="{{ app }}" class="accordion-body collapse">
-                <div class="accordion-inner">
-                    <div class="accordion">
-                        {% for name, form in forms.items %}
-                        <div class="accordion-group">
-                            {% if form %}
-                            <div class="accordion-heading">
-                                <a data-toggle="collapse" href="#{{ name }}" class="accordion-toggle">{{ form.Meta.verbose_name }}</a>
-                            </div>
-                            <div id="{{ name }}" class="accordion-body collapse">
-                                <div class="accordion-inner">
-                                    <div class="form-group">
-                                        <form id="id_{{ form.get_url_name }}">{% csrf_token %}
-                                        {{ form }}
-                                        <input type="button" value="SET" onclick="set_url('#id_{{ form.get_url_name }}', true); return false;" class="btn btn-primary">
-                                        </form>
-                                    </div>
+        </div>
+    </div>
+
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a data-toggle="collapse" href="#files" class="accordion-toggle">Files</a>
+        </div>
+        <div id="files" class="accordion-body collapse">
+            <div class="accordion-inner">
+                <form method="post" action="{% url 'filer-set-file' %}">{% csrf_token %}
+                    <div class="row">
+                        <div class="span12">
+                            <input type="hidden" id="id_ckeditorfuncnum" name="ckeditorfuncnum" value="{{ request.GET.CKEditorFuncNum }}">
+                            {{ file_form.file }}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="span12">
+                            <input type="submit" value="SET" class="btn btn-primary">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {% for app, forms in apps.items %}
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a data-toggle="collapse" href="#{{ app }}" class="accordion-toggle">{{ app }}</a>
+        </div>
+        <div id="{{ app }}" class="accordion-body collapse">
+            <div class="accordion-inner">
+                <div class="accordion">
+                    {% for name, form in forms.items %}
+                    <div class="accordion-group">
+                        {% if form %}
+                        <div class="accordion-heading">
+                            <a data-toggle="collapse" href="#{{ name }}" class="accordion-toggle">{{ form.Meta.verbose_name }}</a>
+                        </div>
+                        <div id="{{ name }}" class="accordion-body collapse">
+                            <div class="accordion-inner">
+                                <div class="form-group">
+                                    <form id="id_{{ form.get_url_name }}">{% csrf_token %}
+                                    {{ form }}
+                                    <input type="button" value="SET" onclick="set_url('#id_{{ form.get_url_name }}', true); return false;" class="btn btn-primary">
+                                    </form>
                                 </div>
                             </div>
-                            {% else %}
-                            <div class="accordion-heading">
-                                <a href="#" onclick="set_url('{{ name }}', false);">{{ name }}</a>
-                            </div>
-                            {% endif %}
                         </div>
-                        {% endfor %}
+                        {% else %}
+                        <div class="accordion-heading">
+                            <a href="#" onclick="set_url('{{ name }}', false);">{{ name }}</a>
+                        </div>
+                        {% endif %}
                     </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
-        {% endfor %}
     </div>
+    {% endfor %}
+</div>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/js/bootstrap-tab.js"></script>
+<script type="text/javascript">
+    $('#tabs a').click(function (e) {
+      e.preventDefault();
+      $(this).tab('show');
+    })
+</script>
 {% endblock %}
