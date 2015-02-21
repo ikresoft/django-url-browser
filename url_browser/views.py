@@ -97,16 +97,19 @@ def set_image(request):
     if request.method == "POST":
         form = ImageForm(request.POST)
         if form.is_valid():
-            return render(
-                request,
-                "url_browser/filer_done.html",
-                {
-                    "url": get_image_dict(
+            img_dict = get_image_dict(
                         form.cleaned_data["image"],
                         form.cleaned_data["thumbnail_option"],
                         form.cleaned_data["width"],
                         form.cleaned_data["height"]
-                    )["url"],
+                    )
+            return render(
+                request,
+                "url_browser/filer_done.html",
+                {
+                    "url": img_dict["url"],
+                    "filer_id": img_dict["filer_id"],
+                    "front_image": form.cleaned_data["front_image"],
                     "ckeditor_param": form.cleaned_data["ckeditorfuncnum"],
                 }
             )

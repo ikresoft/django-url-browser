@@ -5,7 +5,6 @@
 <script type="text/javascript">
 	{% if ckeditor_param %}
 	window.opener.CKEDITOR.tools.callFunction( {{ ckeditor_param }}, '{{ url }}', function() {
-		alert("AAAA");
 		var element,
         dialog = this.getDialog();
 	    // Check if this is the Image dialog window.
@@ -15,11 +14,12 @@
 	        // Assign the new value.
 	        if ( element )
 	            element.setValue( '{{ description }}' );
-
+	        {% if front_image %}
 	        element = dialog.getContentElement( 'advanced', 'txtGenClass' );
 	        // Assign the new value.
 	        if ( element )
-	            element.setValue( 'front_image' + 'filer_id-{{ filer_id }}');
+	            element.setValue( 'front_image ' + 'filer_id-{{ filer_id }}');
+	        {% endif %}
 	    }
 		return true;
 	});

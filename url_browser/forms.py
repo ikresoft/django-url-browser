@@ -100,6 +100,7 @@ class ImageForm(forms.Form):
     height = fields.IntegerField(required=False)
     crop = fields.BooleanField(required=False)
     upscale = fields.BooleanField(required=False)
+    front_image = fields.BooleanField(required=False)
     ckeditorfuncnum = fields.IntegerField(widget=widgets.HiddenInput(), required=False)
 
 
