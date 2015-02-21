@@ -4,7 +4,25 @@
 {{ block.super }}
 <script type="text/javascript">
 	{% if ckeditor_param %}
-	window.opener.CKEDITOR.tools.callFunction( {{ ckeditor_param }}, '{{ url }}');
+	window.opener.CKEDITOR.tools.callFunction( {{ ckeditor_param }}, '{{ url }}', function() {
+		alert("AAAA");
+		var element,
+        dialog = this.getDialog();
+	    // Check if this is the Image dialog window.
+	    if ( dialog.getName() == 'image' ) {
+	        // Get the reference to a text field that holds the "alt" attribute.
+	        element = dialog.getContentElement( 'info', 'txtAlt' );
+	        // Assign the new value.
+	        if ( element )
+	            element.setValue( '{{ description }}' );
+
+	        element = dialog.getContentElement( 'advanced', 'txtGenClass' );
+	        // Assign the new value.
+	        if ( element )
+	            element.setValue( 'front_image' + 'filer_id-{{ filer_id }}');
+	    }
+		return true;
+	});
     this.close();
     {% endif %}
 </script>

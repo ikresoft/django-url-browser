@@ -61,7 +61,9 @@ def form_view(request):
 
 def get_image_dict(image_id, thumb_options=None, width=None, height=None):
     image = Image.objects.get(pk=image_id)
+    filer_id = image.pk
     url = image.url
+    description = image.default_alt_text
     thumbnail_options = {}
     if thumb_options is not None:
         thumbnail_options = ThumbnailOption.objects.get(pk=thumb_options).as_dict
@@ -79,6 +81,8 @@ def get_image_dict(image_id, thumb_options=None, width=None, height=None):
         url = image.url
     data = {
         'url': url,
+        'filer_id': filer_id,
+        'description': description,
         'width': image.width,
         'height': image.height,
     }
