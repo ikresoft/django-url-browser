@@ -1,6 +1,9 @@
-{% extends "admin/base.html" %}
+{% extends "admin/base_site.html" %}
 
-{% block extrahead %}{{ media }}
+{% block extrahead %}
+{{ media }}
+<script type="text/javascript" src="/static/admin/js/jquery.min.js"></script>
+<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
 {{ image_form.media }}
 <script type="text/javascript">
     function getUrlParam( paramName ) {
